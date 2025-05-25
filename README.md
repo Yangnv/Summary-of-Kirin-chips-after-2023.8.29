@@ -5,9 +5,9 @@
 
 手机: 
 
-麒麟8020 --nova 14pro/14ultra
-
 麒麟9020 --mate 70pro/70pro+/X6 --MatePad Pro 13.2 2025
+
+麒麟8020 --nova 14pro/14ultra
 
 麒麟9010 --mate 70/XT --pura 70pro/70pro+/70ultra
 
