@@ -7,6 +7,8 @@
 
 麒麟9020 --mate 70pro/70pro+/X6 --MatePad Pro 13.2 2025
 
+麒麟9020a --mate 70pro优享版
+
 麒麟8020 --nova 14pro/14ultra
 
 麒麟9010 --mate 70/XT --pura 70pro/70pro+/70ultra
@@ -48,6 +50,8 @@
 麒麟： 
 
        9020
+
+                9020a(9020cpu超大核大核降频，gpu阉割一个核心)
 
                 8020(9020降频)
        
