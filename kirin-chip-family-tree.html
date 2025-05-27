@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>麒麟芯片家族关系图</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        /* 动态背景 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(250, 112, 154, 0.05) 0%, transparent 50%);
+            animation: backgroundShift 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes backgroundShift {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-20px, -20px) rotate(120deg); }
+            66% { transform: translate(20px, -10px) rotate(240deg); }
+        }
+        
+        .container {
+            max-width: 1920px;
+            margin: 0 auto;
+            padding: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+        
+        h1 {
+            color: white;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+        
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+        
+        .tree-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            width: 100%;
+        }
+        
+        .series-group {
+            animation: slideIn 0.6s ease-out;
+            animation-fill-mode: both;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .series-group:nth-child(1) { animation-delay: 0.3s; }
+        .series-group:nth-child(2) { animation-delay: 0.4s; }
+        .series-group:nth-child(3) { animation-delay: 0.5s; }
+        .series-group:nth-child(4) { animation-delay: 0.6s; }
+        
+        .series-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 15px;
+            box-shadow: 
+                0 5px 20px rgba(102, 126, 234, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        
+        .series-title::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s;
+            opacity: 0;
+        }
+        
+        .series-title:hover::before {
+            animation: shine 0.6s ease-in-out;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); opacity: 0; }
+        }
+        
+        .chip-node {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 12px;
+            margin: 8px 0;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transform-origin: left center;
+            opacity: 0;
+            animation: chipFadeIn 0.5s ease-out forwards;
+            font-size: 12px;
+        }
+        
+        .chip-node:nth-child(1) { animation-delay: 0.1s; }
+        .chip-node:nth-child(2) { animation-delay: 0.2s; }
+        .chip-node:nth-child(3) { animation-delay: 0.3s; }
+        .chip-node:nth-child(4) { animation-delay: 0.4s; }
+        .chip-node:nth-child(5) { animation-delay: 0.5s; }
+        .chip-node:nth-child(6) { animation-delay: 0.6s; }
+        .chip-node:nth-child(7) { animation-delay: 0.7s; }
+        .chip-node:nth-child(8) { animation-delay: 0.8s; }
+        
+        @keyframes chipFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+        
+        .chip-node:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 
+                0 8px 20px rgba(102, 126, 234, 0.15),
+                0 3px 8px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+            z-index: 10;
+        }
+        
+        .chip-sub:hover {
+            box-shadow: 
+                0 8px 20px rgba(33, 150, 243, 0.25),
+                0 3px 8px rgba(0, 0, 0, 0.1);
+            border-color: #2196f3;
+        }
+        
+        .chip-sub-sub:hover {
+            box-shadow: 
+                0 8px 20px rgba(76, 175, 80, 0.25),
+                0 3px 8px rgba(0, 0, 0, 0.1);
+            border-color: #4caf50;
+        }
+        
+        .chip-sub-sub-sub:hover {
+            box-shadow: 
+                0 8px 20px rgba(103, 58, 183, 0.25),
+                0 3px 8px rgba(0, 0, 0, 0.1);
+            border-color: #673ab7;
+        }
+        
+        .chip-main {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            border: none;
+            color: white;
+            box-shadow: 
+                0 5px 15px rgba(250, 112, 154, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+        
+        .chip-main:hover {
+            box-shadow: 
+                0 10px 25px rgba(250, 112, 154, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+        
+        .chip-sub {
+            margin-left: 25px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-color: #90caf9;
+        }
+        
+        .chip-sub-sub {
+            margin-left: 50px;
+            background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+            border-color: #81c784;
+        }
+        
+        .chip-sub-sub-sub {
+            margin-left: 75px;
+            background: linear-gradient(135deg, #b39ddb 0%, #9575cd 100%);
+            border-color: #7e57c2;
+        }
+        
+        .chip-name {
+            font-weight: 700;
+            font-size: 14px;
+            color: #2c3e50;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .chip-main .chip-name {
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .chip-sub .chip-name {
+            color: #0d47a1;
+        }
+        
+        .chip-sub-sub .chip-name {
+            color: #1b5e20;
+        }
+        
+        .chip-sub-sub-sub .chip-name {
+            color: #311b92;
+        }
+        
+        .chip-desc {
+            font-size: 11px;
+            color: #e74c3c;
+            margin-bottom: 4px;
+            font-style: italic;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+        
+        .chip-sub .chip-desc {
+            color: #1976d2;
+            font-weight: 600;
+        }
+        
+        .chip-sub-sub .chip-desc {
+            color: #388e3c;
+            font-weight: 600;
+        }
+        
+        .chip-sub-sub-sub .chip-desc {
+            color: #5e35b1;
+            font-weight: 600;
+        }
+        
+        .chip-devices {
+            font-size: 11px;
+            color: #34495e;
+            line-height: 1.5;
+        }
+        
+        .chip-main .chip-devices {
+            color: rgba(255, 255, 255, 0.95);
+        }
+        
+        .chip-sub .chip-devices {
+            color: #424242;
+        }
+        
+        .chip-sub-sub .chip-devices {
+            color: #2e4a2e;
+        }
+        
+        .chip-sub-sub-sub .chip-devices {
+            color: #3e2a5f;
+        }
+        
+        .device-type {
+            font-weight: 600;
+            color: #0288d1;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+        
+        .chip-main .device-type {
+            color: #fff;
+        }
+        
+        .chip-sub .device-type {
+            color: #1565c0;
+        }
+        
+        .chip-sub-sub .device-type {
+            color: #2e7d32;
+        }
+        
+        .chip-sub-sub-sub .device-type {
+            color: #4527a0;
+        }
+        
+        .connection-line {
+            position: absolute;
+            left: -25px;
+            top: 50%;
+            width: 25px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #95a5a6);
+            transform: translateY(-50%);
+            opacity: 0;
+            animation: lineGrow 0.5s ease-out forwards;
+            animation-delay: inherit;
+        }
+        
+        .chip-sub .connection-line {
+            background: linear-gradient(90deg, transparent, #64b5f6);
+        }
+        
+        .chip-sub-sub .connection-line {
+            background: linear-gradient(90deg, transparent, #81c784);
+        }
+        
+        .chip-sub-sub-sub .connection-line {
+            background: linear-gradient(90deg, transparent, #9575cd);
+        }
+        
+        .chip-sub-sub .connection-line,
+        .chip-sub-sub-sub .connection-line {
+            left: -25px;
+            width: 25px;
+        }
+        
+        @keyframes lineGrow {
+            from {
+                opacity: 0;
+                transform: translateY(-50%) scaleX(0);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(-50%) scaleX(1);
+            }
+        }
+        
+        .connection-line::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: -3px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #3498db, #2980b9);
+            box-shadow: 0 0 6px rgba(52, 152, 219, 0.5);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .chip-sub .connection-line::before {
+            background: radial-gradient(circle, #2196f3, #1976d2);
+            box-shadow: 0 0 6px rgba(33, 150, 243, 0.5);
+            animation: pulseBlue 2s ease-in-out infinite;
+        }
+        
+        .chip-sub-sub .connection-line::before {
+            background: radial-gradient(circle, #4caf50, #388e3c);
+            box-shadow: 0 0 6px rgba(76, 175, 80, 0.5);
+            animation: pulseGreen 2s ease-in-out infinite;
+        }
+        
+        .chip-sub-sub-sub .connection-line::before {
+            background: radial-gradient(circle, #673ab7, #512da8);
+            box-shadow: 0 0 6px rgba(103, 58, 183, 0.5);
+            animation: pulsePurple 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 6px currentColor;
+            }
+            50% {
+                transform: scale(1.2);
+                box-shadow: 0 0 12px currentColor;
+            }
+        }
+        
+        @keyframes pulseBlue {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 6px rgba(33, 150, 243, 0.5);
+            }
+            50% {
+                transform: scale(1.2);
+                box-shadow: 0 0 12px rgba(33, 150, 243, 0.8);
+            }
+        }
+        
+        @keyframes pulseGreen {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 6px rgba(76, 175, 80, 0.5);
+            }
+            50% {
+                transform: scale(1.2);
+                box-shadow: 0 0 12px rgba(76, 175, 80, 0.8);
+            }
+        }
+        
+        @keyframes pulsePurple {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 6px rgba(103, 58, 183, 0.5);
+            }
+            50% {
+                transform: scale(1.2);
+                box-shadow: 0 0 12px rgba(103, 58, 183, 0.8);
+            }
+        }
+        
+        .chip-sub .connection-line::before {
+            animation: pulseBlue 2s ease-in-out infinite;
+        }
+        
+        .chip-sub-sub .connection-line::before {
+            animation: pulseGreen 2s ease-in-out infinite;
+        }
+        
+        .chip-sub-sub-sub .connection-line::before {
+            animation: pulsePurple 2s ease-in-out infinite;
+        }
+        
+        .legend {
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            animation: fadeIn 0.8s ease-out 1s both;
+        }
+        
+        .legend-title {
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 20px;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #34495e;
+            transition: all 0.3s ease;
+        }
+        
+        .legend-item:hover {
+            transform: translateY(-1px);
+        }
+        
+        .legend-color {
+            width: 18px;
+            height: 18px;
+            margin-right: 6px;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .legend-item:hover .legend-color {
+            transform: scale(1.2) rotate(5deg);
+        }
+        
+        /* 动画 */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #764ba2, #667eea);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1600px) {
+            .tree-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 900px) {
+            h1 { font-size: 28px; }
+            .tree-container { 
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            .main-content { padding: 15px; }
+            .chip-sub { margin-left: 20px; }
+            .chip-sub-sub { margin-left: 40px; }
+            .chip-sub-sub-sub { margin-left: 60px; }
+            .connection-line { left: -20px; width: 20px; }
+        }
+        
+        /* 加载动画 */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeOut 0.5s ease-out 1.5s forwards;
+            pointer-events: none;
+        }
+        
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+        
+        .loading-text {
+            color: white;
+            font-size: 20px;
+            font-weight: 300;
+            letter-spacing: 4px;
+            animation: loadingPulse 1s ease-in-out infinite;
+        }
+        
+        @keyframes loadingPulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+        
+        /* 优化大屏显示 */
+        @media (min-width: 1920px) {
+            .container {
+                max-width: 1800px;
+            }
+            .tree-container {
+                gap: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载动画 -->
+    <div class="loading-overlay">
+        <div class="loading-text">KIRIN CHIPS</div>
+    </div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>麒麟芯片家族关系图</h1>
+            <p class="subtitle">2023年8月29日后的麒麟芯片汇总（共22款，截至2025年5月25日）</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="tree-container">
+                <!-- 9020系列 -->
+                <div class="series-group">
+                    <div class="series-title">9020系列</div>
+                    
+                    <div class="chip-node chip-main">
+                        <div class="chip-name">麒麟9020</div>
+                        <div class="chip-devices">
+                            <div class="device-type">📱 手机：</div>
+                            mate 70pro/70pro+/70非凡大师/X6
+                            <div class="device-type">📱 平板：</div>
+                            MatePad Pro 13.2 2025 典藏款 (支持SIM卡)
+                        </div>
+                    </div>
+                    
+                    <div class="chip-node chip-sub">
+                        <div class="connection-line"></div>
+                        <div class="chip-name">麒麟9020a</div>
+                        <div class="chip-desc">9020超大核和大核降频</div>
+                        <div class="chip-devices">
+                            <div class="device-type">📱 手机：</div>
+                            mate 70pro 优享版
+                        </div>
+                    </div>
+                    
+                    <div class="chip-node chip-sub-sub">
+                        <div class="connection-line"></div>
+                        <div class="chip-name">麒麟8020</div>
+                        <div class="chip-desc">9020a超大核和小核降频</div>
+                        <div class="chip-devices">
+                            <div class="device-type">📱 手机：</div>
+                            nova 14pro/14ultra
+                        </div>
+                    </div>
+                    
+                    <div class="chip-node chip-sub">
+                        <div class="connection-line"></div>
+                        <div class="chip-name">麒麟T92</div>
+                        <div class="chip-desc">9020屏蔽通讯基带</div>
+                        <div class="chip-devices">
+                            <div class="device-type">📱 平板：</div>
+                            MatePad Pro 13.2 2025 标准版/柔光版
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 9010系列 -->
+                <div class="series-group">
+                    <div class="series-title">9010系列</div>
+                    
+                    <div class="chip-node chip-main">
+                        <div class="chip-name">麒麟9010</div>
+                        <div class="chip-devices">
+                            <div class="device-type">📱 手机：</div>
+                            mate 70/XT<br>pura 70pro/70pro+/70ultra
+                        </div>
+                    </div>
+                    
+                    <div class="chip-node chip-sub">
+                        <div class="connection-line"></div>
+                        <div class="chip-name">麒麟9010E</div>
+                        <div class="chip-desc">9010超大核降频</div>
+                        <div class="chip-devices">
+                            <div class="device-type">📱 手机：</div>
+                            pura 70 北斗卫星消息版
+                            <div class="device-type">📱 平板：</div>
+                            MatePad Pro 12.2 (SIM卡版本)
+                        </div>
+                    </div>
+                    
+                    <div class="chip-node chip-sub-sub">
+                        <div class="connection-line"></div>
+                        <div class="chip-name">麒麟T91 (9010W)</div>
+                        <div class="chip-desc">9010E屏蔽通讯基带</div>
+                        <div class="chip-devices">
+                            <div class="device-type">📱 平板：</div>
+                            MatePad Pro 12.2 普通版/柔光版<br>
+                            MatePad Air 12 柔光版 (换芯;12G运存)
+                        </div>
+                    </div>
+                    
+                    <div class="chip-node chip-sub-sub-sub">
+                        <div class="connection-line"></div>
+                        <div class="chip-name">麒麟T91A</div>
+                        <div class="chip-desc">T91小核降频</div>
+                        <div class="chip-devices">
+                            <div class="device-type">📱 平板：</div>
+                            MatePad Air 12 标准版 (换芯;8G,12G运存)
+                        </div>
+                    </div>
+                    
+                    <div class="chip-node chip-sub-sub">
+                        <div class="connection-line"></div>
+                        <div class="chip-name">麒麟9010L</div>
+                        <div class="chip-desc">9010E阉割一个大核和一个小核</div>
+                        <div class="chip-devices">
+                            <div class="device-type">📱 手机：</div>
+                            nova 12ultra 星耀版
+                        </div>
+                    </div>
+                    
+                    <div class="chip-node chip-sub-sub-sub">
+                        <div class="connection-line"></div>
+                        <div class="chip-name">麒麟T91C</div>
+                        <div class="chip-desc">9010L屏蔽通讯基带</div>
+                        <div class="chip-devices">
+                            <div class="device-type">📱 平板：</div>
+                            MatePad 11.5S 灵动版/线下标准版(非柔光版) (换芯)
+                        </div>
+                    </div>
+                    
+                    <div class="chip-node chip-sub">
+                        <div class="connection-line"></div>
+                        <div class="chip-name">麒麟T91B</div>
+                        <div class="chip-desc">9010屏蔽通讯基带</div>
+                        <div class="chip-devices">
+                            <div class="device-type">📱 平板：</div>
+                            MatePad 11.5S 柔光版 (换芯;12G运存)
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 9000S系列 -->
+                <div class="series-group">
+                    <div class="series-title">9000S系列</div>
+                    
+                    <div class="chip-node chip-main">
+                        <div class="chip-name">麒麟9000S</div>
+                        <div class="chip-devices">
+                            <div class="device-type">📱 手机：</div>
+                            mate 60/60pro/60pro+<br>pocket 2<br>mate X5
+                            <div class="device-type">📱 平板：</div>
+                            MatePad Pro 13.2 2024 典藏版 (SIM卡版本)
+                        </div>
+                    </div>
+                    
+                    <div class="chip-node chip-sub">
+                        <div class="connection-line"></div>
+                        <div class="chip-name">麒麟9000S1</div>
+                        <div class="chip-desc">9000s超大核降频</div>
+                        <div class="chip-devices">
+                            <div class="device-type">📱 手机：</div>
+                            pura 70
+                        </div>
+                    </div>
+                    
+                    <div class="chip-node chip-sub-sub">
+                        <div class="connection-line"></div>
+                        <div class="chip-name">麒麟9000S UC</div>
+                        <div class="chip-desc">9000S1屏蔽通讯基带</div>
+                        <div class="chip-devices">
+                            <div class="device-type">📱 平板：</div>
+                            MatePad Pro 11 2024 标准版<br>
+                            MatePad Pro 13.2 标准版
+                        </div>
+                    </div>
+                    
+                    <div class="chip-node chip-sub-sub">
+                        <div class="connection-line"></div>
+                        <div class="chip-name">麒麟T90 (9000W)</div>
+                        <div class="chip-desc">9000S1屏蔽通讯基带</div>
+                        <div class="chip-devices">
+                            <div class="device-type">📱 平板：</div>
+                            MatePad Air 12 标准版/柔光版 (早期;12G运存)
+                        </div>
+                    </div>
+                    
+                    <div class="chip-node chip-sub-sub">
+                        <div class="connection-line"></div>
+                        <div class="chip-name">麒麟9000WE</div>
+                        <div class="chip-desc">9000S1屏蔽通讯基带</div>
+                        <div class="chip-devices">
+                            <div class="device-type">📱 平板：</div>
+                            MatePad Air 12 标准版 (早期;8G运存)<br>
+                            MatePad 11.5S 柔光版 (早期;12G运存)<br>
+                            MatePad 11.5S 柔光版 (换芯;8G运存)
+                        </div>
+                    </div>
+                    
+                    <div class="chip-node chip-sub-sub">
+                        <div class="connection-line"></div>
+                        <div class="chip-name">麒麟9000WL</div>
+                        <div class="chip-desc">9000S1屏蔽通讯基带</div>
+                        <div class="chip-devices">
+                            <div class="device-type">📱 平板：</div>
+                            MatePad 11.5S 柔光版 (早期;8G运存)
+                        </div>
+                    </div>
+                    
+                    <div class="chip-node chip-sub-sub">
+                        <div class="connection-line"></div>
+                        <div class="chip-name">麒麟9000SL</div>
+                        <div class="chip-desc">9000S1阉割一个大核和一个小核</div>
+                        <div class="chip-devices">
+                            <div class="device-type">📱 手机：</div>
+                            nova 12ultra
+                        </div>
+                    </div>
+                    
+                    <div class="chip-node chip-sub-sub-sub">
+                        <div class="connection-line"></div>
+                        <div class="chip-name">麒麟9000WM</div>
+                        <div class="chip-desc">9000SL屏蔽通讯基带</div>
+                        <div class="chip-devices">
+                            <div class="device-type">📱 平板：</div>
+                            MatePad 11.5S 灵动版/线下标准版 (早期)
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 8000系列 -->
+                <div class="series-group">
+                    <div class="series-title">8000系列</div>
+                    
+                    <div class="chip-node chip-main">
+                        <div class="chip-name">麒麟8000</div>
+                        <div class="chip-devices">
+                            <div class="device-type">📱 手机：</div>
+                            nova 12/12pro/13/13pro/flip/14
+                        </div>
+                    </div>
+                    
+                    <div class="chip-node chip-sub">
+                        <div class="connection-line"></div>
+                        <div class="chip-name">麒麟8000a</div>
+                        <div class="chip-desc">8000阉割一个大核和一个小核</div>
+                        <div class="chip-devices">
+                            <div class="device-type">📱 手机：</div>
+                            畅享 70X
+                        </div>
+                    </div>
+                    
+                    <div class="chip-node chip-sub">
+                        <div class="connection-line"></div>
+                        <div class="chip-name">麒麟T80</div>
+                        <div class="chip-desc">8000屏蔽通讯基带</div>
+                        <div class="chip-devices">
+                            <div class="device-type">📱 平板：</div>
+                            MatePad 11.5 2024 标准版/柔光版
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="legend">
+                <div class="legend-title">图例说明：</div>
+                <div class="legend-item">
+                    <span class="legend-color" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);"></span>
+                    主芯片
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border: 1px solid #90caf9;"></span>
+                    一级衍生芯片
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color" style="background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%); border: 1px solid #81c784;"></span>
+                    二级衍生芯片
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color" style="background: linear-gradient(135deg, #b39ddb 0%, #9575cd 100%); border: 1px solid #7e57c2;"></span>
+                    三级衍生芯片
+                </div>
+                <div class="legend-item">
+                    <span style="color: #e74c3c; font-style: italic;">红色斜体：</span>
+                    芯片特性说明
+                </div>
+                <div class="legend-item">
+                    📱 设备类型标识
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
