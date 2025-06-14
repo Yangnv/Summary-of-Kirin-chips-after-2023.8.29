@@ -8,7 +8,7 @@
 
 9020系列：
 
-麒麟9020 --mate 70pro/70pro+/70非凡大师/X6
+麒麟9020 --mate 70pro/70pro+/70非凡大师/X6 --pura 80pro/80pro+/80ultra
 
 麒麟9020a --mate 70pro 优享版
 
