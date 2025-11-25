@@ -9,7 +9,7 @@
 
 麒麟9030：--mate 80pro（12G运存）
 
-麒麟9030pro：--mate 80pro（16G运存）/80 promax/80非凡大师
+麒麟9030pro：--mate 80pro（16G运存）/80 promax/80非凡大师/X7/X7 典藏版
 
 9020系列：
 
